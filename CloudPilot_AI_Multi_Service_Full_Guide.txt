@@ -114,6 +114,19 @@ Use SSH tunnel from your laptop/MobaXterm local port 8000 -> remote 127.0.0.1:80
 - EC2 launch: use valid Mumbai AMI, subnet, SG, key pair. No public IPv4. Instance type restricted to small set.
 - Confirm one operation at a time. Check AWS Console and billing.
 
+Ex:
+Prompt: Prepare exactly one EC2 launch request.
+
+AMI: ami-08e3b3155fc937a94
+Instance type: t3.micro
+Key pair: MyFirstKey
+Security group: sg-0d3325252fb44a8e4
+Subnet: subnet-0b24d7c6d7bb86050
+Name: My-Web-server
+Region: ap-south-1
+Call prepare_launch_ec2 only. Do not call inventory tools. Show the approval preview and wait for my confirmation.
+
+
 8. KNOWN LIMITATIONS / HONEST STATUS
 This guide provides a code starter, not a claim that it has been executed successfully in your account. Bedrock Converse tool-use compatibility depends on model/profile and SDK versions. Run tests in your account, read server logs, and fix validation/IAM errors without bypassing approval. No auth, persistence, multi-user protection, CSRF defense, durable audit, idempotency, or automated cost estimation. Do not deploy publicly until hardened.
 
