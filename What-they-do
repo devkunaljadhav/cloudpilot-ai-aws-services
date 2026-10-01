@@ -1,0 +1,71 @@
+### 1. Core Application
+
+| Feature                    | Status                |
+| -------------------------- | --------------------- |
+| Python Backend             | ✅ Implemented         |
+| FastAPI                    | ✅ Implemented         |
+| Amazon Bedrock Integration | ✅ Implemented         |
+| MCP Server                 | ✅ Implemented         |
+| Boto3 AWS Integration      | ✅ Implemented         |
+| AI Tool Calling            | 🧪 Tested             |
+| Chat UI                    | 🟡 Basic UI           |
+| ChatGPT-like Polished UI   | 🟠 Improvement Needed |
+| Conversation History       | ❌ Not Implemented     |
+| User Authentication        | ❌ Not Implemented     |
+
+### 2. AWS Services
+
+| AWS Service    | Operation               | Status                |
+| -------------- | ----------------------- | --------------------- |
+| EC2            | List Instances          | ✅ Implemented         |
+| EC2            | Instance Details        | ✅ Implemented         |
+| EC2            | Launch Instance         | 🟠 Needs Verification |
+| EC2            | Stop Instance           | ❌ Not Implemented     |
+| EC2            | Start Instance          | ❌ Not Implemented     |
+| EC2            | Reboot Instance         | ❌ Not Implemented     |
+| EC2            | Terminate Instance      | ❌ Not Implemented     |
+| VPC            | List VPCs               | ✅ Implemented         |
+| VPC            | Create VPC              | 🟠 Needs Verification |
+| Subnet         | List Subnets            | 📘 Guide Only         |
+| Subnet         | Create Subnet           | 📘 Guide Only         |
+| Security Group | List Security Groups    | ✅ Implemented         |
+| Security Group | Inspect Details         | ✅ Implemented         |
+| Security Group | Security Audit          | 🧪 Tested             |
+| Security Group | Create SG               | 🟠 Needs Verification |
+| Security Group | Add/Remove Rules        | ❌ Not Implemented     |
+| S3             | List Buckets            | 📘 Guide Only         |
+| S3             | Create Bucket           | 📘 Guide Only         |
+| S3             | Upload/Download Objects | ❌ Not Implemented     |
+| RDS            | List/Inspect            | 📘 Guide Only         |
+| RDS            | Create/Delete           | ❌ Not Implemented     |
+| Lambda         | List Functions          | 📘 Guide Only         |
+| Lambda         | Create/Update           | ❌ Not Implemented     |
+| CloudWatch     | List Alarms             | 📘 Guide Only         |
+| IAM            | List Roles              | 📘 Guide Only         |
+| IAM            | Create/Delete Roles     | ❌ Not Implemented     |
+
+### 3. AI Capabilities
+
+| Feature                                  | Status               |
+| ---------------------------------------- | -------------------- |
+| Natural Language Prompt                  | 🧪 Tested            |
+| AI Identifies Required AWS Tool          | 🧪 Tested            |
+| AWS Tool Execution                       | 🧪 Tested            |
+| AWS Response to AI                       | 🧪 Tested            |
+| Formatted AI Response                    | 🧪 Tested            |
+| Multi-step Infrastructure Planning       | 🟠 Needs Development |
+| AI-generated Infrastructure Architecture | ❌ Not Implemented    |
+| Automatic Cost Estimation                | ❌ Not Implemented    |
+| AI Troubleshooting                       | 🟠 Needs Development |
+
+### 4. Security & Production Readiness
+
+| Feature                         | Status                  |
+| ------------------------------- | ----------------------- |
+| IAM Role Integration            | ✅ Implemented           |
+| Least Privilege IAM             | 🟠 Needs Review         |
+| Destructive Action Confirmation | 🟠 Needs Implementation |
+| Audit Logs                      | ❌ Not Implemented       |
+| Budget / Cost Protection        | ❌ Not Implemented       |
+| API Authentication              | ❌ Not Implemented       |
+| Production Deployment Hardening | ⏳ Pending               |
