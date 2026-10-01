@@ -1,0 +1,123 @@
+CLOUDPILOT AI — MULTI-SERVICE AWS ASSISTANT
+Beginner implementation guide | Chat UI + Bedrock + approval-gated AWS actions
+Region default: ap-south-1 (Mumbai)
+
+PURPOSE
+This version expands beyond EC2. It includes a ChatGPT-style web UI, Bedrock tool selection, fixed AWS tool allowlist, approval preview/confirm flow, and modular boto3 functions.
+
+Included in this starter:
+READ:
+- EC2 instances
+- VPCs
+- Subnets
+- Security Groups + basic inbound exposure audit
+- S3 buckets (names/region only)
+- RDS DB instances (metadata)
+- Lambda functions (metadata)
+- CloudWatch alarms (metadata)
+- IAM roles (names only; no secrets/policies)
+
+APPROVAL-GATED CREATE:
+- EC2: launch one instance, selected AMI/type/subnet/SG/key pair; no public IPv4
+- Security Group: create in an existing VPC; no inbound rule is opened
+- S3: create a bucket in ap-south-1 with public access block enabled
+- VPC: create a VPC with supplied IPv4 CIDR
+- Subnet: create a subnet in a selected existing VPC/AZ/CIDR
+- Lambda: create function from an existing ZIP object in S3; requires execution role ARN, runtime, handler, bucket/key
+- RDS: create a small single-AZ DB instance; user supplies identifier, engine, class, allocated storage, credentials, subnet group, SG; database password is submitted only to backend over HTTPS/local SSH tunnel and is never sent to Bedrock. This starter deliberately does NOT expose RDS create through natural-language model tool calling; use a separate explicit form/API only after adding secret handling. Do not put DB passwords in chat.
+NOT INCLUDED AS AUTOMATED WRITES:
+- IAM role/policy creation, access keys, security-group ingress opening, public exposure, deletion/termination, EKS/ECS, NAT Gateway, load balancers. These need additional safeguards and can create significant costs/security exposure.
+- This is a learning MVP, not production-ready. No login or durable audit database. Use only over SSH tunnel, with AWS budget alerts. AWS charges may apply.
+
+SAFETY RULES
+1. Never attach Administrator Access.
+2. Use EC2 instance profile; no access keys in code.
+3. Every write action requires preview then explicit confirm.
+4. Approval IDs are single-use and expire in 5 minutes.
+5. Keep UI bound to localhost; use SSH tunnel. Do not expose port 8000 publicly.
+6. Review all resource IDs, region, costs and networking before confirming.
+7. S3 bucket created with public access block; no public ACL/policy.
+8. EC2 launch has no public IPv4 by default.
+9. This starter's in-memory approval store resets on restart and is not multi-user safe.
+10. Use sandbox account and clean up manually after checking dependencies.
+
+ARCHITECTURE
+Browser static/index.html -> FastAPI /api/chat -> Bedrock Converse tool-use
+-> allowlisted dispatcher -> boto3 -> AWS
+Write tool -> preview payload + approval ID -> UI Confirm -> /api/approve -> AWS API
+Never let model emit shell commands or arbitrary AWS actions.
+
+1. AWS SETUP
+Use Amazon Linux 2023 host in ap-south-1. In host security group allow SSH TCP 22 only from your own public IP/32. Do not open 8000 to 0.0.0.0/0.
+Attach an instance profile role with the least permissions needed. Starter permissions below are broad resource-wise and should be narrowed for production; validate using IAM Access Analyzer. Bedrock model/profile must be enabled in your account.
+
+Starter IAM policy actions (review before use):
+EC2 read: ec2:DescribeInstances, DescribeImages, DescribeVpcs, DescribeSubnets, DescribeSecurityGroups, DescribeKeyPairs, DescribeAvailabilityZones
+EC2 writes: ec2:RunInstances, ec2:CreateSecurityGroup, ec2:CreateTags, ec2:CreateVpc, ec2:CreateSubnet
+S3 read/create: s3:ListAllMyBuckets, s3:GetBucketLocation, s3:CreateBucket, s3:PutBucketPublicAccessBlock
+RDS read: rds:DescribeDBInstances
+Lambda read/create: lambda:ListFunctions, lambda:CreateFunction, iam:PassRole (only for an explicitly approved execution role; tightly scope PassRole to exact role ARN)
+CloudWatch read: cloudwatch:DescribeAlarms
+IAM read: iam:ListRoles
+Bedrock: bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream
+Some actions require dependent permissions/resources. Do not grant broad iam:PassRole. For production separate read and write roles and constrain resources, regions, tags, and role ARNs.
+
+OR
+
+Admin Full Access
+
+2. INSTALL
+sudo dnf update -y
+sudo dnf install -y python3.11 python3.11-pip
+mkdir -p /root/cloudpilot-ai/app /root/cloudpilot-ai/static
+cd /root/cloudpilot-ai
+python3.11 -m venv venv311
+source venv311/bin/activate
+python -m pip install --upgrade pip
+Create requirements.txt:
+fastapi>=0.110,<1
+uvicorn[standard]>=0.29,<1
+boto3>=1.34,<2
+pydantic>=2,<3
+Then:
+pip install -r requirements.txt
+Create app/__init__.py (empty).
+
+3. app/aws_tools.py
+Paste:
+All Code in the (cloudpilot-ai)
+
+4. app/web.py
+Paste:
+All Code in the (cloudpilot-ai)
+
+5. static/index.html
+Paste:
+All Code in the (cloudpilot-ai)
+
+6. RUN
+cd /root/cloudpilot-ai
+source venv311/bin/activate
+export AWS_REGION=ap-south-1
+export BEDROCK_MODEL_ID=global.amazon.nova-2-lite-v1:0
+uvicorn app.web:app --host 127.0.0.1 --port 8000
+
+Use SSH tunnel from your laptop/MobaXterm local port 8000 -> remote 127.0.0.1:8000. Browse http://127.0.0.1:8000. Do not add public inbound 8000.
+
+7. TEST
+- GET /health
+- Ask: list my EC2, VPCs, subnets, SGs, S3, RDS, Lambda, CloudWatch alarms, IAM roles.
+- Ask to create test VPC with an unused CIDR; review preview, confirm only if you accept it.
+- Create subnet only with a valid VPC, non-overlapping CIDR, AZ in Mumbai.
+- Create private S3 bucket using globally unique name; public access block is enabled.
+- Create SG: created without inbound access.
+- EC2 launch: use valid Mumbai AMI, subnet, SG, key pair. No public IPv4. Instance type restricted to small set.
+- Confirm one operation at a time. Check AWS Console and billing.
+
+8. KNOWN LIMITATIONS / HONEST STATUS
+This guide provides a code starter, not a claim that it has been executed successfully in your account. Bedrock Converse tool-use compatibility depends on model/profile and SDK versions. Run tests in your account, read server logs, and fix validation/IAM errors without bypassing approval. No auth, persistence, multi-user protection, CSRF defense, durable audit, idempotency, or automated cost estimation. Do not deploy publicly until hardened.
+
+9. COST & CLEANUP
+EC2, EBS, S3, RDS, VPC networking, Bedrock calls and other AWS resources can bill. RDS and NAT Gateway can be costly. Use AWS Budgets and free-tier eligibility checks; free tier does not mean every resource/action is free. This starter does not delete resources automatically. Inspect dependencies and delete only known test resources in AWS Console.
+
+END
