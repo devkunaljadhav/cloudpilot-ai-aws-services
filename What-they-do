@@ -7,11 +7,11 @@
 | Amazon Bedrock Integration | ✅ Implemented         |
 | MCP Server                 | ✅ Implemented         |
 | Boto3 AWS Integration      | ✅ Implemented         |
-| AI Tool Calling            | 🧪 Tested             |
-| Chat UI                    | 🟡 Basic UI           |
-| ChatGPT-like Polished UI   | 🟠 Improvement Needed |
-| Conversation History       | ❌ Not Implemented     |
-| User Authentication        | ❌ Not Implemented     |
+| AI Tool Calling            | ✅ Implemented (Bedrock Converse)|
+| Chat UI                    | ✅ Implemented         |
+| ChatGPT-like Polished UI   | ✅ Implemented         |
+| Conversation History       | ✅ Implemented (Multi-Session)|
+| User Authentication        | ✅ Implemented (API Key & Login)|
 
 ### 2. AWS Services
 
@@ -42,17 +42,17 @@
 | Lambda         | Create/Update           | ✅ Implemented         |
 | CloudWatch     | List Alarms             | ✅ Implemented         |
 | IAM            | List Roles              | ✅ Implemented         |
-| IAM            | Create/Delete Roles     | ❌ Not Implemented     |
+| IAM            | Create/Delete Roles     | ✅ Implemented         |
 
 ### 3. AI Capabilities
 
 | Feature                                  | Status               |
 | ---------------------------------------- | -------------------- |
-| Natural Language Prompt                  | 🧪 Tested            |
-| AI Identifies Required AWS Tool          | 🧪 Tested            |
-| AWS Tool Execution                       | 🧪 Tested            |
-| AWS Response to AI                       | 🧪 Tested            |
-| Formatted AI Response                    | 🧪 Tested            |
+| Natural Language Prompt                  | ✅ Tested & Verified |
+| AI Identifies Required AWS Tool          | ✅ Tested & Verified |
+| AWS Tool Execution                       | ✅ Tested & Verified |
+| AWS Response to AI                       | ✅ Tested & Verified |
+| Formatted AI Response                    | ✅ Tested & Verified |
 | Multi-step Infrastructure Planning       | ✅ Implemented         |
 | AI-generated Infrastructure Architecture | ✅ Implemented         |
 | Automatic Cost Estimation                | ✅ Implemented         |

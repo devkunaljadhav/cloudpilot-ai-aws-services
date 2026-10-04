@@ -2,6 +2,7 @@
 import io
 import zipfile
 import secrets
+import json
 import boto3
 from botocore.exceptions import ClientError
 
@@ -125,9 +126,62 @@ def list_alarms(region=DEFAULT_REGION):
       for a in sess(region).client("cloudwatch").describe_alarms().get("MetricAlarms",[])]
 
 def list_iam_roles(region=DEFAULT_REGION):
-    # IAM is global; boto3 accepts a region endpoint for IAM.
     return [{"name":r["RoleName"],"arn":r["Arn"],"created":str(r["CreateDate"])}
       for r in sess(region).client("iam").list_roles().get("Roles",[])]
+
+def create_iam_role(role_name, service_principal="lambda.amazonaws.com", description="CloudPilot managed IAM role", attach_policy_arn=None, region=DEFAULT_REGION):
+    iam = sess(region).client("iam")
+    trust_policy = {
+        "Version": "2012-10-17",
+        "Statement": [{
+            "Effect": "Allow",
+            "Principal": {"Service": service_principal},
+            "Action": "sts:AssumeRole"
+        }]
+    }
+    r = iam.create_role(
+        RoleName=role_name,
+        AssumeRolePolicyDocument=json.dumps(trust_policy),
+        Description=description or "CloudPilot managed IAM role",
+        Tags=[{"Key": "ManagedBy", "Value": "CloudPilotAI"}]
+    )
+    role_arn = r["Role"]["Arn"]
+    
+    if attach_policy_arn:
+        try:
+            iam.attach_role_policy(RoleName=role_name, PolicyArn=attach_policy_arn)
+        except Exception:
+            pass
+    elif "lambda" in service_principal:
+        try:
+            iam.attach_role_policy(
+                RoleName=role_name,
+                PolicyArn="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+            )
+        except Exception:
+            pass
+            
+    return {
+        "role_name": role_name,
+        "role_arn": role_arn,
+        "service_principal": service_principal,
+        "status": "Role created successfully"
+    }
+
+def delete_iam_role(role_name, region=DEFAULT_REGION):
+    iam = sess(region).client("iam")
+    attached = iam.list_attached_role_policies(RoleName=role_name).get("AttachedPolicies", [])
+    for p in attached:
+        try:
+            iam.detach_role_policy(RoleName=role_name, PolicyArn=p["PolicyArn"])
+        except Exception:
+            pass
+            
+    iam.delete_role(RoleName=role_name)
+    return {
+        "role_name": role_name,
+        "status": "IAM Role deleted successfully"
+    }
 
 def create_sg(name, description, vpc_id, region=DEFAULT_REGION):
     ec2=sess(region).client("ec2")
