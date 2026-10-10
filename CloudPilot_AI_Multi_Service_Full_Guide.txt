@@ -1,5 +1,7 @@
 CLOUDPILOT AI — EC2 DEPLOYMENT
 
+https://github.com/devkunaljadhav/cloudpilot-ai-aws-services.git
+
 Deploy the existing CloudPilot AI app to an EC2 instance from either GitHub or your local project, then run it.
 
 1. EC2 REQUIREMENTS
